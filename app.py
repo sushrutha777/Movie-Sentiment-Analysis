@@ -4,9 +4,12 @@ from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.datasets import imdb
 import re
 
-# Load the GRU model
-model_path = 'gru_model.keras'
-model = load_model(model_path, custom_objects=None, compile=False, safe_mode=False)
+# Cache model so it's loaded only once
+@st.cache_resource
+def get_model():
+    return load_model("gru_model.keras", compile=False)
+
+model = get_model()
 
 max_features = 10000
 max_len = 500
@@ -24,7 +27,6 @@ positive_reviews = [
     "Amazing soundtrack, perfect pacing, and visuals that made the experience feel magical and cinematic.",
     "This movie was fantastic! The acting was great and the plot was thrilling.",
     "Exceeded expectations with inspiring storytelling, top-notch acting, and a powerful emotional message.",
- 
 ]
 
 negative_reviews = [
@@ -32,6 +34,7 @@ negative_reviews = [
     "Started strong but didn't maintain the energy or emotional impact",
     "Terrible experience! The film dragged endlessly and made no sense at all.",
 ]
+
 # Streamlit configuration
 st.set_page_config(page_title="IMDB Sentiment Analysis", page_icon="🎬")
 st.title("🎬 IMDB Movie Review Sentiment Analysis")
